@@ -1,0 +1,25 @@
+Precios Redes :
+
+	Routers :
+		1841 : 400$. http://www.cnet.com/products/cisco-1841-integrated-services-router-router-desktop-series/prices/
+		1941 : 505$. http://www.cnet.com/products/cisco-1941-router-desktop-rack-mountable-series/#p=cisco-1941-router-desktop-rack-mountable/
+		2620XM : 669$. http://www.cnet.com/products/cisco-2620xm-router-rack-mountable-series/prices/
+		2621XM : no consigo el precio exacto  .  http://www.cnet.com/products/cisco-2621xm-router-rack-mountable-series/
+		2811 : http://www.cnet.com/products/cisco-2811-integrated-services-router-router-desktop-series/prices/
+		2901 : 605$. http://www.cnet.com/products/cisco-2901-router-rack-mountable-series/prices/
+		2911 : 405$. http://www.cnet.com/products/cisco-2911-router-rack-mountable/prices/
+		819 : 750$. http://www.cnet.com/products/cisco-819-4g-lte-m2m-gateway-integrated-service-router-router-cellular-modem-desktop-series/prices/
+
+	Switches :
+		2950-24 : 300$. http://www.cnet.com/products/cisco-catalyst-2950-24-24-port-switch/#p=cisco-catalyst-2950-24-24-port-switch/
+		2950T : 250$. http://www.cnet.com/products/cisco-catalyst-2950t-24-switch-24-ports-managed-rack-mountable/
+		2960 : 675$. http://www.cnet.com/products/cisco-catalyst-2960s-48ts-l-48-port-managed-switch/#p=cisco-catalyst-2960s-48ts-l-48-port-managed-switch/
+
+	Cables : 
+		Copper Straight-Through : 7.6m de cable por 20$ : http://www.bestbuy.com/site/insignia-25-cat-5e-network-cable-gray/6233003.p?id=1219198823437&skuId=6233003
+		Fiber : 304m por 200$ : http://www.amazon.com/1000ft-Fiber-Optic-Singlemode-Duplex/dp/B005NWYQN2
+		DCE/DTE serial : 0.3m por 5$ : https://www.monoprice.com/product?c_id=102&cp_id=10206&cs_id=1020601&p_id=242&seq=1&format=2 
+
+	Servidor : 
+		Depende totalmente de las especificaciones : http://www.amazon.com/b?ie=UTF8&node=11036071 aparentemente entre 500$-5000$.
+
