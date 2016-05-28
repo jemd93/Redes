@@ -23,3 +23,6 @@ Precios Redes :
 	Servidor : 
 		Depende totalmente de las especificaciones : http://www.amazon.com/b?ie=UTF8&node=11036071 aparentemente entre 500$-5000$.
 
+
+Distancias entre los puntos : 107.93km en total. Redondeemos a 108km ... Uh... En teoria eso significa, si compramos fibra optica, debemos comprar 355*300 metros de fibra optica, es decir, 200*355 = 71.000$. << No se si esto sea necesario, es mucho haha,pero lo documento por si a caso.
+
