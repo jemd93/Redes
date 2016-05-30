@@ -27,18 +27,17 @@ Precios Redes :
 Distancias entre los puntos : 
 	107.93km en total. Redondeemos a 108km ... Uh... En teoria eso significa, si compramos fibra optica, debemos comprar 355*300 metros de fibra optica, es decir, 200*355 = 71.000$. << No se si esto sea necesario, es mucho haha,pero lo documento por si a caso.
 
-Router -> http://www.cnet.com/products/cisco-2911-router-rack-mountable/#p=cisco-2911-router-rack-mountable/ Este router se ve suficientemente serio para lo que queremos sin ser el mas barato ni el mas caro. El precio es intermedio, por 1015$ en Amazon, si usamos 4 son 4060$.
+Router -> http://www.cnet.com/products/cisco-2911-router-rack-mountable/#p=cisco-2911-router-rack-mountable/ Este router se ve suficientemente serio para lo que queremos sin ser el mas barato ni el mas caro. El precio es intermedio, por 475$ en AIIHDD.com si usamos 4 son 1900$.
 
-Switch -> http://www.cnet.com/products/cisco-catalyst-2960s-48ts-l-48-port-managed-switch/#p=cisco-catalyst-2960s-48ts-l-48-port-managed-switch/ Este switch es de 48 puertos y creo que es lo que necesitamos,
-los otros son de 24 y no nos alcanza para todas las subredes... En amazon esta a 1165$, en ServerSupply.com esta a 700$, si compramos de ahi 4, son 700*4 = 2800$.
+Switch -> 5 switch de los de 250 de 24 puertos. Eso es 250*5 = 1250$
 
 Servidor -> Si depende de las especificaciones y estan entre 500 y 5000$ creo que basta comprar uno de que si 500$ o 1000$ para lo que necesitamos que es solo DHCP. 
 
 Presupuesto final (sin contar cables en las subredes ya que no tenemos distancias ahi) :
 
 Fibra Optica : 			71.000$ (Falta contar redundancia en los cables)
-Routers : 				 4.060$
-Switches :				 2.800$
+Routers : 				 1.900$
+Switches :				 1.250$
 Servidor : 				   750$ (estimado)
 						--------
 						78.610$ 
