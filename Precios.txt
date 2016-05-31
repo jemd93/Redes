@@ -35,15 +35,11 @@ Servidor -> Si depende de las especificaciones y estan entre 500 y 5000$ creo qu
 
 Presupuesto final (sin contar cables en las subredes ya que no tenemos distancias ahi) :
 
-Fibra Optica : 			71.000$ (Falta contar redundancia en los cables)
 Routers : 				 1.900$
 Switches :				 1.250$
 Servidor : 				   750$ (estimado)
 						--------
-						78.610$ 
-
-Sin fibra optica serian 7.610$. 
-
+						3.900$ 
 
 
 
