@@ -1,0 +1,39 @@
+Jorge Marcano.
+
+Deteccion de errores con :
+
+	ping : Envia paquetes ICMP, retorna el echo si funciona y muestra info respecto al envio.
+
+	traceroute : Muestra los saltos de un host a otro durante la transferencia de un paquete.
+
+En el router :
+	> enable 
+	> config terminal
+	> interface Fa0/0 (Configuracion de la interfaz)
+	> ip address 192.168.1.1 255.255.255.0
+	> no shutdown
+	> exit 
+   
+ (para rip)
+
+
+> enable    
+> config terminal
+	
+> router rip
+	
+> network 192.168.1.0 (red)
+	
+> network 192.168.2.0
+	
+> exit
+
+	
+
+Router>
+Router>enable
+Router#configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+Router(config)#ip dhcp pool LAN-Maiquetia 
+Router(dhcp-config)#network 220.42.10.32 255.255.255.224
+Router(dhcp-config)#default-router 220.42.10.33
