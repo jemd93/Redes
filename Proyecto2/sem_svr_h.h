@@ -1,5 +1,5 @@
 /**************************************************/
-/* Cliente para la Asignacion 3.                  */
+/* Servidor para la Asignacion 3.                 */
 /* Jorge Marcano : 11-10566                       */
 /* Maria Victoria Jorge : 11-10495                */
 /**************************************************/
@@ -14,6 +14,4 @@
 #include <sys/types.h> 
 
 // #define SERVER_PORT 20495
-// #define BUFFER_LEN 1024 
-
-void checkArgs(int argc,char *argv[]);
+#define BUFFER_LEN 1024 

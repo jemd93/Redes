@@ -4,16 +4,15 @@
 /* Maria Victoria Jorge : 11-10495                */
 /**************************************************/
 
-#include <stdio.h> 
-#include <stdlib.h> 
-#include <errno.h> 
-#include <string.h> 
-#include <unistd.h> 
-#include <netdb.h> 
-#include <arpa/inet.h> 
-#include <sys/types.h> 
+#include "sem_svr_h.h"
 
-// #define SERVER_PORT 20495
-#define BUFFER_LEN 1024 
+int main(int argc, char *argv[]){
+	char lectPipe[4];
+	fdGeneral = argv[0];
+	fdHijo = argv[1];
+	printf("Pipe: %s pipeH: %s\n",argv[0],argv[1]);
+	read(fdGeneral, lectPipe, 4);
 
-void checkArgs(int argc,char *argv[]);
+	write(fdHijo,"000",4);
+
+}
