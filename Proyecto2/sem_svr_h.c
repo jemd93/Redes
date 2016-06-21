@@ -7,10 +7,11 @@
 #include "sem_svr_h.h"
 
 int main(int argc, char *argv[]){
+	int fdGeneral, fdHijo;
 	char lectPipe[4];
-	fdGeneral = argv[0];
-	fdHijo = argv[1];
-	printf("Pipe: %s pipeH: %s\n",argv[0],argv[1]);
+	fdGeneral = atoi(argv[0]);
+	fdHijo = atoi(argv[1]);
+	printf("Pipe: %d pipeH: %d\n",fdGeneral, fdHijo);
 	read(fdGeneral, lectPipe, 4);
 
 	write(fdHijo,"000",4);

@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
 	int pipesHLectura[3]; // FD de lectura de los tres clientes
 	int pipesHEscritura[3]; // FD de escritura de los tres clientes
 	int numPipe = 0;
-	char str[4];
+	char str[4], strPipeGeneral[4], strPipeH[4];
 
 	int puestosOcupados = 0;
 	int i;
@@ -55,10 +55,12 @@ int main(int argc, char *argv[])
 	pipe(fdPipes);
 	pipeGeneral[0] = fdPipes[0];
 	pipeGeneral[1] = fdPipes[1];
+	//printf("Pipe General %d %d\n",pipeGeneral[0],pipeGeneral[1] );
 	for (i = 0; i < 3; i++){
 		pipe(fdPipes);
 		pipesHLectura[i] = fdPipes[0];
 		pipesHEscritura[i] = fdPipes[1];
+		//printf("Pipe %d: %d %d\n",i,pipesHLectura[i],pipesHEscritura[i] );
 	}
 
 	while (1) {
@@ -113,7 +115,9 @@ int main(int argc, char *argv[])
 				}
 				close(pipesHLectura[i]);
 			}
-			if (execlp("./sem_svr_h","sem_svr_h",pipeGeneral[0],pipesHEscritura[numPipe],NULL)<0){
+			sprintf(strPipeGeneral,"%d",pipeGeneral[0]);
+			sprintf(strPipeH,"%d",pipesHEscritura[numPipe]);
+			if (execlp("./sem_svr_h",strPipeGeneral,strPipeH,NULL)<0){
                 perror("exec: ");
             }
 		}
@@ -135,7 +139,6 @@ int main(int argc, char *argv[])
 
 		fclose(bitacora_entrada);
 		fclose(bitacora_salida);
-		break;
 	}
 
 	exit (0); 
