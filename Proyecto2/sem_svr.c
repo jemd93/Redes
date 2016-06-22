@@ -79,6 +79,7 @@ int main(int argc, char *argv[])
 		i = i+2;
 	}
 
+	int opt = 1;
 	while (1) {
 
 		if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) { 
@@ -91,8 +92,18 @@ int main(int argc, char *argv[])
 		info_serv.sin_addr.s_addr = INADDR_ANY; // escuchamos en todas las IPs 
 		bzero(&(info_serv.sin_zero), 8); // rellena con ceros el resto de la estructura 
 		/* Se le da un nombre al socket (se lo asocia al puerto e IPs) */ 
+
+		// SetsocketOptions. 
+		// SOL_SOCKET es para que aplique la opcion a nivel de socket
+		// SO_REUSEADDR para que la misma aplicacion pueda usar el mismo puerto varias veces
+		// opt es 1 para "prender" la opcion.
+		// No se para que es el size of int,pero en stack overflow lo ponian asi.
+		setsockopt(sockfd,SOL_SOCKET,SO_REUSEADDR,(const char *)&opt,sizeof(int));
+
+		
+
 		printf("Asignado direccion al socket ....\n"); 
-		if (bind(sockfd, (struct sockaddr *)&info_serv, sizeof(struct sockaddr)) == -1) { 
+		if (bind(sockfd,(struct sockaddr *)&info_serv, sizeof(struct sockaddr)) == -1) { 
 			perror("bind"); 
 			exit(2); 
 		} 
@@ -125,8 +136,8 @@ int main(int argc, char *argv[])
 			write(pipeGeneral[1],str,strlen(str)+1);
 			read(pipesHLectura[numPipe],str,4);
 			puestosOcupados = atoi(str);
-			numPipe = (numPipe + 1) % 3;
-			close(sockfd); 
+			numPipe = (numPipe + 1) % 3; 
+			close(sockfd);
 		}
 
 		//close(pipeGeneral[0]); // Cierro el fd de leer porque no lo uso
