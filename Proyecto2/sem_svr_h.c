@@ -4,6 +4,11 @@
 /* Maria Victoria Jorge : 11-10495                */
 /**************************************************/
 
+/*
+	La entrada de este programa es:
+	sem_sevr_h fdPipeGeneral fdPipeHijo bitacora_entrada bitacora_salida puerto_local
+*/
+
 #include "sem_svr_h.h"
 
 int main(int argc, char *argv[]){

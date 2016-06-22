@@ -9,7 +9,7 @@
 void checkArgs(int argc,char *argv[]) {
 	// Chequeo del numero de parametros
 	if (argc != 7) { 
-		fprintf(stderr,"\nError: Por favor introduzca los parametros correctos", argv[0]); 
+		fprintf(stderr,"Error: Por favor introduzca los parametros correctos\n"); 
 		exit(1); 
 	} 
 
@@ -17,7 +17,7 @@ void checkArgs(int argc,char *argv[]) {
 	int i = 1;
 	while (i < 7) {
 		if (!((strcmp(argv[i],"-l") == 0) || (strcmp(argv[i],"-i") == 0) || (strcmp(argv[i],"-o") == 0))) {
-			fprintf(stderr,"\nError: Por favor introduzca los parametros correctos",argv[0]);
+			fprintf(stderr,"Error: Por favor introduzca los parametros correctos\n");
 			exit(1);
 		}
 		i = i+2;
@@ -26,30 +26,26 @@ void checkArgs(int argc,char *argv[]) {
 
 int main(int argc, char *argv[]) 
 { 
-	int sockfd; /* descriptor para el sockfd */ 
-	struct sockaddr_in info_serv; /* direccion IP y numero de puerto local */ 
-	struct sockaddr_in info_cl; /* direccion IP y numero de puerto del cliente */ 
-	 // addr_len contendra el taman~o de la estructura sockadd_in y numbytes el 
-	// * numero de bytes recibidos  
-	int addr_len, numbytes; 
-	char buf[BUFFER_LEN]; /* Buffer de recepción */ 
-	// /* se crea el sockfd */ 
+	int sockfd; // File descriptor del socket
+	struct sockaddr_in info_serv;  // Direccion IP y numero de puerto local 
+	struct sockaddr_in info_cl; // Direccion IP y numero de puerto del cliente  
+	int addr_len, numbytes; //Tamaño de la estructura sockadd_in y bytes recibidos
+	char buf[BUFFER_LEN]; // Buffer de recepción 
 
 	char puerto_sem_svr[5];
-	FILE *bitacora_entrada; 
-	FILE *bitacora_salida; 
+	char* bitacora_entrada; 
+	char* bitacora_salida; 
 
-	// PID para los procesos
-	pid_t pid;
+	pid_t pid; // PID para los procesos
 
 	int fdPipes[2]; // File descriptor de un pipe
 	int pipeGeneral[2]; // Pipe que comparten todos los hijos para leer
 	int pipesHLectura[3]; // FD de lectura de los tres clientes
 	int pipesHEscritura[3]; // FD de escritura de los tres clientes
-	int numPipe = 0;
+	int numPipe = 0; // Identificador para la asignación de los pipes
 	char str[4], strPipeGeneral[4], strPipeH[4];
 
-	int puestosOcupados = 0;
+	int puestosOcupados = 0; // Total de puestos ocupados en el estacionamiento
 	int i;
 
 	pipe(fdPipes);
@@ -63,34 +59,37 @@ int main(int argc, char *argv[])
 		//printf("Pipe %d: %d %d\n",i,pipesHLectura[i],pipesHEscritura[i] );
 	}
 
-	while (1) {
-		// Chequeos de entrada.
-		checkArgs(argc,argv);
+	// Chequeos de entrada.
+	checkArgs(argc,argv);
 
-		// Asignacion de puerto y archivos de bitacoras
-		i = 1;
-		while (i < 7) {
-			if (strcmp(argv[i],"-l") == 0) {
-				strcpy(puerto_sem_svr,argv[i+1]);
-			}
-			if (strcmp(argv[i],"-i") == 0) {
-				bitacora_entrada = fopen(argv[i+1],"w");
-			}
-			if (strcmp(argv[i],"-o") == 0) {
-				bitacora_salida = fopen(argv[i+1],"w");
-			}
-			i = i+2;
+	// Asignacion de puerto y archivos de bitacoras
+	i = 1;
+	while (i < 7) {
+		if (strcmp(argv[i],"-l") == 0) {
+			strcpy(puerto_sem_svr,argv[i+1]);
 		}
+		if (strcmp(argv[i],"-i") == 0) {
+			bitacora_entrada = (char*)malloc(strlen(argv[i+1])+1);
+			strcpy(bitacora_entrada,argv[i+1]);
+		}
+		if (strcmp(argv[i],"-o") == 0) {
+			bitacora_salida = (char*)malloc(strlen(argv[i+1])+1);
+			strcpy(bitacora_entrada,argv[i+1]);
+		}
+		i = i+2;
+	}
+
+	while (1) {
 
 		if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) { 
 			perror("socket"); 
 			exit(1); 
 		} 
 		/* Se establece la estructura info_serv para luego llamar a bind() */ 
-		info_serv.sin_family = AF_INET; /* usa host byte order */ 
-		info_serv.sin_port = htons(atoi(puerto_sem_svr)); /* usa network byte order */ 
-		info_serv.sin_addr.s_addr = INADDR_ANY; /* escuchamos en todas las IPs */ 
-		bzero(&(info_serv.sin_zero), 8); /* rellena con ceros el resto de la estructura */ 
+		info_serv.sin_family = AF_INET; // Usa host byte order 
+		info_serv.sin_port = htons(atoi(puerto_sem_svr)); // usa network byte order 
+		info_serv.sin_addr.s_addr = INADDR_ANY; // escuchamos en todas las IPs 
+		bzero(&(info_serv.sin_zero), 8); // rellena con ceros el resto de la estructura 
 		/* Se le da un nombre al socket (se lo asocia al puerto e IPs) */ 
 		printf("Asignado direccion al socket ....\n"); 
 		if (bind(sockfd, (struct sockaddr *)&info_serv, sizeof(struct sockaddr)) == -1) { 
@@ -108,16 +107,16 @@ int main(int argc, char *argv[])
 
 		pid = fork();
 		if (pid == 0) {
-			close(pipeGeneral[1]); // Cierro el fd de escribir porque no lo uso
+			/*close(pipeGeneral[1]); // Cierro el fd de escribir porque no lo uso
 			for (i = 0; i < 3; i++){
 				if (numPipe != i){
 					close(pipesHEscritura[i]);
-				}
-				close(pipesHLectura[i]);
-			}
+				}*/
+				//close(pipesHLectura[i]);
+			//}
 			sprintf(strPipeGeneral,"%d",pipeGeneral[0]);
 			sprintf(strPipeH,"%d",pipesHEscritura[numPipe]);
-			if (execlp("./sem_svr_h",strPipeGeneral,strPipeH,NULL)<0){
+			if (execlp("./sem_svr_h",strPipeGeneral,strPipeH,bitacora_entrada,bitacora_salida,puerto_sem_svr,NULL)<0){
                 perror("exec: ");
             }
 		}
@@ -125,20 +124,20 @@ int main(int argc, char *argv[])
 			sprintf(str,"%d",puestosOcupados);
 			write(pipeGeneral[1],str,strlen(str)+1);
 			read(pipesHLectura[numPipe],str,4);
-			printf("Respuesta: %s\n", str);
+			puestosOcupados = atoi(str);
 			numPipe = (numPipe + 1) % 3;
 			close(sockfd); 
 		}
 
-		close(pipeGeneral[0]); // Cierro el fd de leer porque no lo uso
-		for (i = 0; i < 3; i++){
+		//close(pipeGeneral[0]); // Cierro el fd de leer porque no lo uso
+		/*for (i = 0; i < 3; i++){
 			close(pipesHEscritura[i]); // Cierro el fd de escribir porque no lo uso
-		}
+		}*/
 
 		waitpid(-1, NULL, WNOHANG); // Limpiando los zombies
 
-		fclose(bitacora_entrada);
-		fclose(bitacora_salida);
+		free(bitacora_entrada);
+		free(bitacora_salida);
 	}
 
 	exit (0); 

@@ -9,7 +9,7 @@
 void checkArgs(int argc,char *argv[]) {
 	// Chequeo del numero de parametros
 	if (argc != 9) { 
-		fprintf(stderr,"\nError: Por favor introduzca los parametros correctos", argv[0]); 
+		fprintf(stderr,"Error: Por favor introduzca los parametros correctos\n"); 
 		exit(1); 
 	} 
 
@@ -18,7 +18,7 @@ void checkArgs(int argc,char *argv[]) {
 	while (i < 9) {
 		if (!((strcmp(argv[i],"-d") == 0) || (strcmp(argv[i],"-p") == 0) 
 			|| (strcmp(argv[i],"-c") == 0) || (strcmp(argv[i],"-i") == 0))) {
-			fprintf(stderr,"\nError: Por favor introduzca los parametros correctos",argv[0]);
+			fprintf(stderr,"Error: Por favor introduzca los parametros correctos");
 			exit(1);
 		}
 		i = i+2;
