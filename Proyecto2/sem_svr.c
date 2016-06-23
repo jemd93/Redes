@@ -87,8 +87,14 @@ void procesarMsg(int fdGeneral, int fdHijo, char* puerto_sem_svr, char* msg, int
 		}
 		else {
 			printf("El estacionamiento esta lleno. No se enviara ticket \n");
+			respuesta = (char*)malloc(53);
+			strcpy(respuesta,"Disculpe, en este momento no hay puestos disponibles");
+			if ((numbytes=sendto(sockfd,respuesta,strlen(respuesta)+1,0,(struct sockaddr *)&info_cl,
+			 	sizeof(struct sockaddr))) == -1) { 
+			 	perror("sendto"); 
+			 	exit(2); 
+			} 
 
-			// Aqui se manda un mensaje al cliente.
 		}
 	}
 	else if (strcmp(accion,"s") == 0) {
@@ -100,7 +106,9 @@ void procesarMsg(int fdGeneral, int fdHijo, char* puerto_sem_svr, char* msg, int
 		//fprintf(fout,"%s %s \n",id,s);
 		sprintf(strPuestos,"%d",puestosOcupados-1);
 		write(fdHijo,strPuestos,strlen(strPuestos)+1);
-		// Aqui se manda un mensaje al cliente ?? no ando claro,supongo que si.
+
+		//Hay que calcular la tarifa. Ese es el mensaje para el cliente
+
 	}
 	else {
 		write(fdHijo,lectPipe,4);

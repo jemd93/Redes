@@ -35,7 +35,6 @@ int main(int argc, char *argv[])
 	int sockfd; /* descriptor a usar con el sockfd */ 
 	struct sockaddr_in info_serv; /* almacenara la direccion IP y numero de puerto del servidor */ 
 	struct sockaddr_in info_cl;
-	struct sockaddr_in info;
 	struct hostent *he; /* para obtener nombre del host */ 
 	int numbytes, addr_len; /* conteo de bytes a escribir */ 
 	char buf[BUFFER_LEN]; /* Buffer de recepción */
@@ -104,15 +103,16 @@ int main(int argc, char *argv[])
 	/* Se reciben los datos (directamente, UDP no necesita conexión) */ 
 	addr_len = sizeof(struct sockaddr); 
 	printf("Esperando datos ....\n"); 
-	while (numbytes!=0){
-		if ((numbytes=recvfrom(sockfd, buf, BUFFER_LEN, 0, (struct sockaddr *)&info,
+	while (numbytes==0){
+		if ((numbytes=recvfrom(sockfd, buf, BUFFER_LEN, 0, (struct sockaddr *)&info_serv,
 			(socklen_t *)&addr_len)) == -1) { 
 			perror("recvfrom"); 
 			exit(3); 
 		}
+		printf("%d\n",numbytes );
 	}
 		 
-	printf("Hey\n");
+	printf("Mensaje: %s\n",buf);
 
 	/* cierro sockfd */ 
 	close(sockfd); 
