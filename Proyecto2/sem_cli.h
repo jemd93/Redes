@@ -14,6 +14,6 @@
 #include <sys/types.h> 
 
 // #define SERVER_PORT 20495
-// #define BUFFER_LEN 1024 
+#define BUFFER_LEN 1024 
 
 void checkArgs(int argc,char *argv[]);

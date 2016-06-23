@@ -34,8 +34,11 @@ int main(int argc, char *argv[])
 { 
 	int sockfd; /* descriptor a usar con el sockfd */ 
 	struct sockaddr_in info_serv; /* almacenara la direccion IP y numero de puerto del servidor */ 
+	struct sockaddr_in info_cl;
+	struct sockaddr_in info;
 	struct hostent *he; /* para obtener nombre del host */ 
-	int numbytes; /* conteo de bytes a escribir */ 
+	int numbytes, addr_len; /* conteo de bytes a escribir */ 
+	char buf[BUFFER_LEN]; /* Buffer de recepción */
 
 	char nombre_modulo[21];
 	char puerto_sem_svr[6];
@@ -65,10 +68,7 @@ int main(int argc, char *argv[])
 		}
 		i = i+2;
 	}
-	/*strncpy(&mensaje[0],nombre_modulo,24);
-	strcat(mensaje,",");
-	strcat(mensaje,puerto_sem_svr);
-	strcat(mensaje,",");*/
+
 	mensaje = (char*)malloc(3+strlen(identificador_v));
 	strncpy(&mensaje[0],op,2);
 	strcat(mensaje,",");
@@ -84,6 +84,10 @@ int main(int argc, char *argv[])
 		perror("socket"); 
 		exit(2); 
 	} 
+
+	int opt = 1;
+	setsockopt(sockfd,SOL_SOCKET,SO_REUSEADDR,(const char *)&opt,sizeof(int));
+
 	/* a donde mandar */ 
 	info_serv.sin_family = AF_INET; /* usa host byte order */ 
 	info_serv.sin_port = htons(atoi(puerto_sem_svr)); /* usa network byte order */ 
@@ -96,6 +100,20 @@ int main(int argc, char *argv[])
 		exit(2); 
 	} 
 	printf("enviados %d bytes hacia %s\n",numbytes,inet_ntoa(info_serv.sin_addr)); 
+
+	/* Se reciben los datos (directamente, UDP no necesita conexión) */ 
+	addr_len = sizeof(struct sockaddr); 
+	printf("Esperando datos ....\n"); 
+	while (numbytes!=0){
+		if ((numbytes=recvfrom(sockfd, buf, BUFFER_LEN, 0, (struct sockaddr *)&info,
+			(socklen_t *)&addr_len)) == -1) { 
+			perror("recvfrom"); 
+			exit(3); 
+		}
+	}
+		 
+	printf("Hey\n");
+
 	/* cierro sockfd */ 
 	close(sockfd); 
 	free(mensaje);

@@ -31,6 +31,8 @@ void procesarMsg(int fdGeneral, int fdHijo, char* puerto_sem_svr, char* msg, int
 	char id[6]; // ID del vehiculo
 	int puestosOcupados; // Cantidad de puestos ocupados actualmente
 	char strPuestos[4];
+	int numbytes;
+	char* respuesta;
 
 	// Creando y abriendo los archivos de bitacoras
 	/*FILE *fin;
@@ -43,8 +45,6 @@ void procesarMsg(int fdGeneral, int fdHijo, char* puerto_sem_svr, char* msg, int
 	read(fdGeneral, lectPipe, 4);
 	puestosOcupados = atoi(lectPipe);
 
-
-	// En argv[5] Esta el mensaje enviado por el cliente.
 	// Separando la info que necesitamos (accion y id del vehiculo);
 	pt = strtok(msg,",");
 	int i = 0;
@@ -74,7 +74,16 @@ void procesarMsg(int fdGeneral, int fdHijo, char* puerto_sem_svr, char* msg, int
 			sprintf(strPuestos,"%d",puestosOcupados+1);
 			write(fdHijo,strPuestos,strlen(strPuestos)+1);
 
-			// Aqui se manda un mensaje al cliente.
+			respuesta = (char*)malloc(strlen(id)+strlen(s)+2);
+			strcpy(respuesta,id);
+			strcat(respuesta,",");
+			strcat(respuesta,s);
+			printf("Respuesta %s\n",respuesta );
+			if ((numbytes=sendto(sockfd,respuesta,strlen(respuesta)+1,0,(struct sockaddr *)&info_cl,
+			 	sizeof(struct sockaddr))) == -1) { 
+			 	perror("sendto"); 
+			 	exit(2); 
+			} 
 		}
 		else {
 			printf("El estacionamiento esta lleno. No se enviara ticket \n");
@@ -96,7 +105,7 @@ void procesarMsg(int fdGeneral, int fdHijo, char* puerto_sem_svr, char* msg, int
 	else {
 		write(fdHijo,lectPipe,4);
 	}
-
+	free(respuesta);
 	//fclose(fin);
 	//fclose(fout);
 }
