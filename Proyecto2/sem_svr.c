@@ -78,7 +78,7 @@ void procesarMsg(int fdGeneral, int fdHijo, char* puerto_sem_svr, char* msg, int
 			strcpy(respuesta,id);
 			strcat(respuesta,",");
 			strcat(respuesta,s);
-			printf("Respuesta %s\n",respuesta );
+			printf("Respuesta : %s\n",respuesta );
 			if ((numbytes=sendto(sockfd,respuesta,strlen(respuesta)+1,0,(struct sockaddr *)&info_cl,
 			 	sizeof(struct sockaddr))) == -1) { 
 			 	perror("sendto"); 
@@ -98,16 +98,35 @@ void procesarMsg(int fdGeneral, int fdHijo, char* puerto_sem_svr, char* msg, int
 		}
 	}
 	else if (strcmp(accion,"s") == 0) {
-		struct tm *tm = localtime(&t);
-		char s[64];
-		strftime(s,sizeof(s),"%c",tm);
-		printf("Un carro trata de salir \n");
-		// Se escribe en la bitacora de salida
-		//fprintf(fout,"%s %s \n",id,s);
-		sprintf(strPuestos,"%d",puestosOcupados-1);
-		write(fdHijo,strPuestos,strlen(strPuestos)+1);
+		if (puestosOcupados > 0) {
+			struct tm *tm = localtime(&t);
+			char s[64];
+			strftime(s,sizeof(s),"%c",tm);
+			printf("Un carro de ID %s trata de salir\n",id);
+			// Se escribe en la bitacora de salida
+			//fprintf(fout,"%s %s \n",id,s);
+			sprintf(strPuestos,"%d",puestosOcupados-1);
+			write(fdHijo,strPuestos,strlen(strPuestos)+1);
 
-		//Hay que calcular la tarifa. Ese es el mensaje para el cliente
+			//Hay que calcular la tarifa. Ese es el mensaje para el cliente
+			respuesta = respuesta = (char*)malloc(53);
+			sprintf(respuesta,"Saliendo carro con ID : %s",id);
+			if ((numbytes=sendto(sockfd,respuesta,strlen(respuesta)+1,0,(struct sockaddr *)&info_cl,
+			 	sizeof(struct sockaddr))) == -1) { 
+			 	perror("sendto"); 
+			 	exit(2); 
+			} 
+		}
+		else {
+			printf("Error, el estacionamiento esta vacio \n");
+			respuesta = respuesta = (char*)malloc(53);
+			sprintf(respuesta,"Error, el estacionamiento esta vacio \n");
+			if ((numbytes=sendto(sockfd,respuesta,strlen(respuesta)+1,0,(struct sockaddr *)&info_cl,
+			 	sizeof(struct sockaddr))) == -1) { 
+			 	perror("sendto"); 
+			 	exit(2); 
+			} 
+		}
 
 	}
 	else {
@@ -174,6 +193,7 @@ int main(int argc, char *argv[])
 	int opt = 1;
 	while (1) {
 
+		// Crear un socket UDP
 		if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) { 
 			perror("socket"); 
 			exit(1); 

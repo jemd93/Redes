@@ -102,6 +102,7 @@ int main(int argc, char *argv[])
 
 	/* Se reciben los datos (directamente, UDP no necesita conexión) */ 
 	addr_len = sizeof(struct sockaddr); 
+	numbytes = 0;
 	printf("Esperando datos ....\n"); 
 	while (numbytes==0){
 		if ((numbytes=recvfrom(sockfd, buf, BUFFER_LEN, 0, (struct sockaddr *)&info_serv,
@@ -109,8 +110,8 @@ int main(int argc, char *argv[])
 			perror("recvfrom"); 
 			exit(3); 
 		}
-		printf("%d\n",numbytes );
 	}
+	
 		 
 	printf("Mensaje: %s\n",buf);
 
