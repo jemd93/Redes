@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 	int pipesHLectura[3]; // FD de lectura de los tres clientes
 	int pipesHEscritura[3]; // FD de escritura de los tres clientes
 	int numPipe = 0; // Identificador para la asignación de los pipes
-	char str[4], strPipeGeneral[4], strPipeH[4];
+	char str[4], strPipeGeneral[4], strPipeH[4], strSocketfd[4];
 
 	int puestosOcupados = 0; // Total de puestos ocupados en el estacionamiento
 	int i;
@@ -51,12 +51,10 @@ int main(int argc, char *argv[])
 	pipe(fdPipes);
 	pipeGeneral[0] = fdPipes[0];
 	pipeGeneral[1] = fdPipes[1];
-	//printf("Pipe General %d %d\n",pipeGeneral[0],pipeGeneral[1] );
 	for (i = 0; i < 3; i++){
 		pipe(fdPipes);
 		pipesHLectura[i] = fdPipes[0];
 		pipesHEscritura[i] = fdPipes[1];
-		//printf("Pipe %d: %d %d\n",i,pipesHLectura[i],pipesHEscritura[i] );
 	}
 
 	// Chequeos de entrada.
@@ -118,19 +116,11 @@ int main(int argc, char *argv[])
 
 		pid = fork();
 		if (pid == 0) {
-			/*close(pipeGeneral[1]); // Cierro el fd de escribir porque no lo uso
-			for (i = 0; i < 3; i++){
-				if (numPipe != i){
-					close(pipesHEscritura[i]);
-				}*/
-				//close(pipesHLectura[i]);
-			//}
 			sprintf(strPipeGeneral,"%d",pipeGeneral[0]);
 			sprintf(strPipeH,"%d",pipesHEscritura[numPipe]);
-			// printf("%s \n",bitacora_entrada);
-			// printf("%s \n",bitacora_salida);
-			printf("BITACORA ENTRADA : %s \n",bitacora_entrada);
-			if (execlp("./sem_svr_h",strPipeGeneral,strPipeH,bitacora_entrada,bitacora_salida,puerto_sem_svr,buf,NULL)<0){
+			sprintf(strSocketfd,"%d",sockfd);
+			if (execlp("./sem_svr_h",strPipeGeneral,strPipeH,bitacora_entrada,bitacora_salida,puerto_sem_svr,buf,
+				strSocketfd,NULL)<0){
                 perror("exec: ");
             }
 		}
@@ -140,13 +130,9 @@ int main(int argc, char *argv[])
 			read(pipesHLectura[numPipe],str,4);
 			puestosOcupados = atoi(str);
 			numPipe = (numPipe + 1) % 3; 
+			printf("Cantidad de puestos %s\n", str);
 			close(sockfd);
 		}
-
-		//close(pipeGeneral[0]); // Cierro el fd de leer porque no lo uso
-		/*for (i = 0; i < 3; i++){
-			close(pipesHEscritura[i]); // Cierro el fd de escribir porque no lo uso
-		}*/
 
 		waitpid(-1, NULL, WNOHANG); // Limpiando los zombies
 

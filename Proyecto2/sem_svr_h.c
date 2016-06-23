@@ -6,7 +6,7 @@
 
 /*
 	La entrada de este programa es:
-	sem_sevr_h fdPipeGeneral fdPipeHijo bitacora_entrada bitacora_salida puerto_local
+	sem_sevr_h fdPipeGeneral fdPipeHijo bitacora_entrada bitacora_salida puerto_local mensaje fdSocket
 */
 
 #include "sem_svr_h.h"
@@ -15,9 +15,11 @@ int main(int argc, char *argv[]){
 	int fdGeneral, fdHijo;
 	char lectPipe[4]; // Para leer la cantidad de puestos ocupados
 	char *pt; // Para separar el mensaje
-	char accion[1]; // e o s
+	char accion[2]; // e o s
 	char id[6]; // ID del vehiculo
 	int puestosOcupados; // Cantidad de puestos ocupados actualmente
+	int sockfd;
+	char strPuestos[4];
 
 	// Creando y abriendo los archivos de bitacoras
 	FILE *fin;
@@ -29,21 +31,21 @@ int main(int argc, char *argv[]){
 
 	fdGeneral = atoi(argv[0]);
 	fdHijo = atoi(argv[1]);
-	printf("Pipe: %d pipeH: %d\n",fdGeneral, fdHijo);
+	sockfd = atoi(argv[6]);
+	
 	read(fdGeneral, lectPipe, 4);
 	puestosOcupados = atoi(lectPipe);
 
-	write(fdHijo,"000",4);
 
 	// En argv[5] Esta el mensaje enviado por el cliente.
 	// Separando la info que necesitamos (accion y id del vehiculo);
 	pt = strtok(argv[5],",");
 	int i = 0;
 	while (pt != NULL) {
-		if (i == 2) {
+		if (i == 0) {
 			strcpy(accion,pt);
 		}
-		else if (i == 3) {
+		else if (i == 1) {
 			int a = atoi(pt);
 			sprintf(id,"%d",a);
 		}
@@ -62,6 +64,8 @@ int main(int argc, char *argv[]){
 			printf("Se entregara un ticket con id %s y fecha %s \n",id,s);
 			// Se escribe en la bitacora de entrada.
 			fprintf(fin,"%s %s \n",id,s);
+			sprintf(strPuestos,"%d",puestosOcupados+1);
+			write(fdHijo,strPuestos,strlen(strPuestos)+1);
 
 			// Aqui se manda un mensaje al cliente.
 		}
@@ -78,8 +82,12 @@ int main(int argc, char *argv[]){
 		printf("Un carro trata de salir \n");
 		// Se escribe en la bitacora de salida
 		fprintf(fout,"%s %s \n",id,s);
-
+		sprintf(strPuestos,"%d",puestosOcupados-1);
+		write(fdHijo,strPuestos,strlen(strPuestos)+1);
 		// Aqui se manda un mensaje al cliente ?? no ando claro,supongo que si.
+	}
+	else {
+		write(fdHijo,lectPipe,4);
 	}
 
 	fclose(fin);

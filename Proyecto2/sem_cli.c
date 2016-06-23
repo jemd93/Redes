@@ -4,6 +4,11 @@
 /* Maria Victoria Jorge : 11-10495                */
 /**************************************************/
 
+/* 
+	El formato del mensaje que envía el cliente es:
+	IP_cliente,puerto_servidor,operacion,id_vehiculo
+*/
+
 #include "sem_cli.h"
 
 void checkArgs(int argc,char *argv[]) {
@@ -37,7 +42,8 @@ int main(int argc, char *argv[])
 	char op[2];
 	char identificador_v[11];
 
-	char mensaje[44]; // (IP/HOST (24),puerto(5),op(1),id(10) )
+	//char mensaje[44]; // (IP/HOST (24),puerto(5),op(1),id(10) )
+	char* mensaje;
 
 	// Chequeos de entrada.
 	checkArgs(argc,argv);
@@ -59,11 +65,12 @@ int main(int argc, char *argv[])
 		}
 		i = i+2;
 	}
-	strncpy(&mensaje[0],nombre_modulo,24);
+	/*strncpy(&mensaje[0],nombre_modulo,24);
 	strcat(mensaje,",");
 	strcat(mensaje,puerto_sem_svr);
-	strcat(mensaje,",");
-	strcat(mensaje,op);
+	strcat(mensaje,",");*/
+	mensaje = (char*)malloc(3+strlen(identificador_v));
+	strncpy(&mensaje[0],op,2);
 	strcat(mensaje,",");
 	strcat(mensaje,identificador_v);
 
@@ -91,5 +98,6 @@ int main(int argc, char *argv[])
 	printf("enviados %d bytes hacia %s\n",numbytes,inet_ntoa(info_serv.sin_addr)); 
 	/* cierro sockfd */ 
 	close(sockfd); 
+	free(mensaje);
 	exit(0);
 }
