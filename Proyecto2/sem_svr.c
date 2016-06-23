@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
 		}
 		if (strcmp(argv[i],"-o") == 0) {
 			bitacora_salida = (char*)malloc(strlen(argv[i+1])+1);
-			strcpy(bitacora_entrada,argv[i+1]);
+			strcpy(bitacora_salida,argv[i+1]);
 		}
 		i = i+2;
 	}
@@ -127,7 +127,10 @@ int main(int argc, char *argv[])
 			//}
 			sprintf(strPipeGeneral,"%d",pipeGeneral[0]);
 			sprintf(strPipeH,"%d",pipesHEscritura[numPipe]);
-			if (execlp("./sem_svr_h",strPipeGeneral,strPipeH,bitacora_entrada,bitacora_salida,puerto_sem_svr,NULL)<0){
+			// printf("%s \n",bitacora_entrada);
+			// printf("%s \n",bitacora_salida);
+			printf("BITACORA ENTRADA : %s \n",bitacora_entrada);
+			if (execlp("./sem_svr_h",strPipeGeneral,strPipeH,bitacora_entrada,bitacora_salida,puerto_sem_svr,buf,NULL)<0){
                 perror("exec: ");
             }
 		}
@@ -147,9 +150,9 @@ int main(int argc, char *argv[])
 
 		waitpid(-1, NULL, WNOHANG); // Limpiando los zombies
 
-		free(bitacora_entrada);
-		free(bitacora_salida);
 	}
 
+	free(bitacora_entrada);
+	free(bitacora_salida);
 	exit (0); 
 }

@@ -12,6 +12,7 @@
 #include <netdb.h> 
 #include <arpa/inet.h> 
 #include <sys/types.h> 
+#include <time.h>
 
 // #define SERVER_PORT 20495
 #define BUFFER_LEN 1024 
