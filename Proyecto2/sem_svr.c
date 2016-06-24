@@ -33,6 +33,7 @@ void procesarMsg(int fdGeneral, int fdHijo, char* puerto_sem_svr, char* msg, int
 	char strPuestos[4];
 	int numbytes;
 	char* respuesta;
+	char* mensajeBit;
 
 	// Creando y abriendo los archivos de bitacoras
 	/*FILE *fin;
@@ -72,7 +73,18 @@ void procesarMsg(int fdGeneral, int fdHijo, char* puerto_sem_svr, char* msg, int
 			// Se escribe en la bitacora de entrada.
 			//fprintf(fin,"%s %s \n",id,s);
 			sprintf(strPuestos,"%d",puestosOcupados+1);
-			write(fdHijo,strPuestos,strlen(strPuestos)+1);
+
+			// Agregando el resto de la info
+			mensajeBit = (char *)malloc(strlen(strPuestos)+strlen(id)+strlen(s)+5);
+			strcpy(mensajeBit,strPuestos);
+			strcat(mensajeBit,",");
+			strcat(mensajeBit,"E");
+			strcat(mensajeBit,",");
+			strcat(mensajeBit,id);
+			strcat(mensajeBit,",");
+			strcat(mensajeBit,s);
+
+			write(fdHijo,mensajeBit,strlen(mensajeBit)+1);
 
 			respuesta = (char*)malloc(strlen(id)+strlen(s)+2);
 			strcpy(respuesta,id);
@@ -132,6 +144,7 @@ void procesarMsg(int fdGeneral, int fdHijo, char* puerto_sem_svr, char* msg, int
 	else {
 		write(fdHijo,lectPipe,4);
 	}
+	free(mensajeBit);
 	free(respuesta);
 	//fclose(fin);
 	//fclose(fout);
@@ -144,6 +157,7 @@ int main(int argc, char *argv[])
 	struct sockaddr_in info_cl; // Direccion IP y numero de puerto del cliente  
 	int addr_len, numbytes; //Tamaño de la estructura sockadd_in y bytes recibidos
 	char buf[BUFFER_LEN]; // Buffer de recepción 
+	char* pt;
 
 	char puerto_sem_svr[5];
 	char* bitacora_entrada; 
@@ -160,6 +174,10 @@ int main(int argc, char *argv[])
 
 	int puestosOcupados = 0; // Total de puestos ocupados en el estacionamiento
 	int i;
+
+	// Archivos de las bitacoras 
+	FILE *fin;
+	FILE *fout;
 
 	pipe(fdPipes);
 	pipeGeneral[0] = fdPipes[0];
@@ -246,11 +264,60 @@ int main(int argc, char *argv[])
 		else {
 			sprintf(str,"%d",puestosOcupados);
 			write(pipeGeneral[1],str,strlen(str)+1);
-			read(pipesHLectura[numPipe],str,4);
-			puestosOcupados = atoi(str);
+			read(pipesHLectura[numPipe],str,50);
+
+			// Escribiendo en las bitacoras
+			pt = strtok(str,",");
+			int j = 0;
+			int ent = 0;
+			while (pt != NULL) {
+				if (j == 0) {
+					puestosOcupados = atoi(pt);
+				}
+				else if (j == 1) {
+					if (strcmp(pt,"E") == 0) {
+						fin = fopen(bitacora_entrada,"a");
+						ent = 1;
+					}
+					else if (strcmp(pt,"S") == 0) {
+						fout = fopen(bitacora_salida,"a");
+						ent = -1;
+					}
+					else if (strcmp(pt,"N") == 0) {
+						ent = 0;
+						break;
+					}
+				}
+				else if (j == 2) {
+					if (ent == 1) {
+						fprintf(fin,"%s ",pt);	
+					}
+					else if (ent == -1) {
+						fprintf(fout,"%s ",pt);
+					}
+				}
+				else if (j == 3) {
+					if (ent == 1) { 
+						fprintf(fin,"%s\n",pt);
+						fclose(fin);
+					}
+					else if (ent == -1) {
+						fprintf(fout,"%s\n",pt);
+						fclose(fout);
+					}
+				}
+
+				j++;
+
+				pt = strtok(NULL,",");
+			}
+
+
+			// puestosOcupados = atoi(str);
 			numPipe = (numPipe + 1) % 3; 
-			printf("Cantidad de puestos %s\n", str);
+			// printf("Cantidad de puestos %s\n", str);
 			close(sockfd);
+
 		}
 
 		waitpid(-1, NULL, WNOHANG); // Limpiando los zombies
