@@ -13,9 +13,10 @@
 #include <arpa/inet.h> 
 #include <sys/types.h> 
 #include <time.h>
+#include <string.h>
 
 // #define SERVER_PORT 20495
 #define BUFFER_LEN 1024 
 
 void checkArgs(int argc,char *argv[]);
-void procesarMsg(int fdGeneral, int fdHijo, char* puerto_sem_svr, char* msg, int sockfd, struct sockaddr_in info_cl);
+void procesarMsg(int fdGeneral, int fdHijo, char* puerto_sem_svr, char* msg, int sockfd, struct sockaddr_in info_cl,char* fin);

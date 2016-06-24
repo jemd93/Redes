@@ -13,4 +13,4 @@ sem_svr_h: sem_svr_h.c sem_svr_h.h
 	$(CC) -o sem_svr_h sem_svr_h.c
 
 clean:
-	rm sem_cli sem_svr sem_svr_h
+	rm sem_cli sem_svr sem_svr_h input.log output.log

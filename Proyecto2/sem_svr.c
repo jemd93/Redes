@@ -24,7 +24,70 @@ void checkArgs(int argc,char *argv[]) {
 	}
 }
 
-void procesarMsg(int fdGeneral, int fdHijo, char* puerto_sem_svr, char* msg, int sockfd, struct sockaddr_in info_cl){
+int calcularMonto(char *fname,char *id,char *tiempoAct) {
+
+	FILE *arch;
+	int numlin = 1;
+	int encontrado = 0;
+	char temp[512];
+	char* fechaEntStr;
+
+	struct tm fechaEnt;
+	struct tm fechaSal;
+
+	if ((arch = fopen(fname,"r")) == NULL) {
+		return -1;
+	}
+
+	// Obtiene la ultima ocurrencia en la bitacora con ese ID
+	while (fgets(temp,512,arch) != NULL) {
+		if ((strstr(temp,id)) != NULL) {
+			encontrado++;
+		}
+		numlin++;
+	}
+
+	if (encontrado == 0) {
+		return -2;
+	}
+
+	if (arch) {
+		fclose(arch);
+	}
+
+	fechaEntStr = strtok(temp," ");
+	int i = 0;
+	while (fechaEntStr != NULL) {
+		if (i == 1) 
+			break;
+		fechaEntStr = strtok(NULL,"\n");
+		i++;
+	}
+
+	strptime(fechaEntStr,"%a %b %d %H:%M:%S %Y",&fechaEnt);
+	strptime(tiempoAct,"%a %b %d %H:%M:%S %Y",&fechaSal);
+
+	time_t tEnt = mktime(&fechaEnt);
+	time_t tSal = mktime(&fechaSal);
+
+	time_t totalSegs = difftime(tSal,tEnt);
+
+	if (totalSegs < 3600) {
+		return 30;
+	}
+	else {
+		if ((totalSegs % 3600) == 0) {
+			return (totalSegs / 3600) * 80;
+		}
+		else {
+			return ((totalSegs / 3600) * 80) + 30;
+		}
+	}
+
+	return 1;
+}
+
+void procesarMsg(int fdGeneral, int fdHijo, char* puerto_sem_svr, char* msg, int sockfd, struct sockaddr_in info_cl,char* fin){
 	char lectPipe[4]; // Para leer la cantidad de puestos ocupados
 	char *pt; // Para separar el mensaje
 	char accion[2]; // e o s
@@ -34,6 +97,7 @@ void procesarMsg(int fdGeneral, int fdHijo, char* puerto_sem_svr, char* msg, int
 	int numbytes;
 	char* respuesta;
 	char* mensajeBit;
+	int monto;
 
 	time_t t = time(NULL); // Para obtener la hora actual;
 	
@@ -122,9 +186,11 @@ void procesarMsg(int fdGeneral, int fdHijo, char* puerto_sem_svr, char* msg, int
 
 			write(fdHijo,mensajeBit,strlen(mensajeBit)+1);
 
+			monto = calcularMonto(fin,id,s);
+
 			//Hay que calcular la tarifa. Ese es el mensaje para el cliente
 			respuesta = respuesta = (char*)malloc(53);
-			sprintf(respuesta,"Saliendo carro con ID : %s",id);
+			sprintf(respuesta,"Precio a cancelar : %d",monto);
 			if ((numbytes=sendto(sockfd,respuesta,strlen(respuesta)+1,0,(struct sockaddr *)&info_cl,
 			 	sizeof(struct sockaddr))) == -1) { 
 			 	perror("sendto"); 
@@ -250,7 +316,7 @@ int main(int argc, char *argv[])
 		pid = fork();
 		// Codigo de los hijos
 		if (pid == 0) {
-			procesarMsg(pipeGeneral[0], pipesHEscritura[numPipe], puerto_sem_svr, buf, sockfd, info_cl);
+			procesarMsg(pipeGeneral[0], pipesHEscritura[numPipe], puerto_sem_svr, buf, sockfd, info_cl,bitacora_entrada);
 			free(bitacora_entrada);
 			free(bitacora_salida);
 			exit (0); 
