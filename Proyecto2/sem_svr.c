@@ -118,7 +118,18 @@ void procesarMsg(int fdGeneral, int fdHijo, char* puerto_sem_svr, char* msg, int
 			// Se escribe en la bitacora de salida
 			//fprintf(fout,"%s %s \n",id,s);
 			sprintf(strPuestos,"%d",puestosOcupados-1);
-			write(fdHijo,strPuestos,strlen(strPuestos)+1);
+
+			// Agregando el resto de la info
+			mensajeBit = (char *)malloc(strlen(strPuestos)+strlen(id)+strlen(s)+5);
+			strcpy(mensajeBit,strPuestos);
+			strcat(mensajeBit,",");
+			strcat(mensajeBit,"S");
+			strcat(mensajeBit,",");
+			strcat(mensajeBit,id);
+			strcat(mensajeBit,",");
+			strcat(mensajeBit,s);
+
+			write(fdHijo,mensajeBit,strlen(mensajeBit)+1);
 
 			//Hay que calcular la tarifa. Ese es el mensaje para el cliente
 			respuesta = respuesta = (char*)malloc(53);
@@ -170,7 +181,7 @@ int main(int argc, char *argv[])
 	int pipesHLectura[3]; // FD de lectura de los tres clientes
 	int pipesHEscritura[3]; // FD de escritura de los tres clientes
 	int numPipe = 0; // Identificador para la asignación de los pipes
-	char str[4], strPipeGeneral[4], strPipeH[4], strSocketfd[4];
+	char str[50], strPipeGeneral[4], strPipeH[4], strSocketfd[4];
 
 	int puestosOcupados = 0; // Total de puestos ocupados en el estacionamiento
 	int i;
