@@ -35,12 +35,6 @@ void procesarMsg(int fdGeneral, int fdHijo, char* puerto_sem_svr, char* msg, int
 	char* respuesta;
 	char* mensajeBit;
 
-	// Creando y abriendo los archivos de bitacoras
-	/*FILE *fin;
-	FILE *fout;
-	fin = fopen(argv[2],"a");
-	fout = fopen(argv[3],"a");*/
-
 	time_t t = time(NULL); // Para obtener la hora actual;
 	
 	read(fdGeneral, lectPipe, 4);
@@ -64,14 +58,12 @@ void procesarMsg(int fdGeneral, int fdHijo, char* puerto_sem_svr, char* msg, int
 	}
 
 	if (strcmp(accion,"e") == 0) {
-		printf("Un carro trata de entrar\n");
+		printf("Un carro trata de entrar por la puerta %d \n",((fdHijo-6)/2)+1);
 		if (puestosOcupados < 200) {
 			struct tm *tm = localtime(&t);
 			char s[64];
 			strftime(s,sizeof(s),"%c",tm);
 			printf("Se entregara un ticket con id %s y fecha %s \n",id,s);
-			// Se escribe en la bitacora de entrada.
-			//fprintf(fin,"%s %s \n",id,s);
 			sprintf(strPuestos,"%d",puestosOcupados+1);
 
 			// Agregando el resto de la info
@@ -90,7 +82,6 @@ void procesarMsg(int fdGeneral, int fdHijo, char* puerto_sem_svr, char* msg, int
 			strcpy(respuesta,id);
 			strcat(respuesta,",");
 			strcat(respuesta,s);
-			printf("Respuesta : %s\n",respuesta );
 			if ((numbytes=sendto(sockfd,respuesta,strlen(respuesta)+1,0,(struct sockaddr *)&info_cl,
 			 	sizeof(struct sockaddr))) == -1) { 
 			 	perror("sendto"); 
@@ -114,7 +105,7 @@ void procesarMsg(int fdGeneral, int fdHijo, char* puerto_sem_svr, char* msg, int
 			struct tm *tm = localtime(&t);
 			char s[64];
 			strftime(s,sizeof(s),"%c",tm);
-			printf("Un carro de ID %s trata de salir\n",id);
+			printf("El carro de ID %s trata de salir por la puerta %d \n",id,((fdHijo-6)/2)+1);
 			// Se escribe en la bitacora de salida
 			//fprintf(fout,"%s %s \n",id,s);
 			sprintf(strPuestos,"%d",puestosOcupados-1);
@@ -219,6 +210,7 @@ int main(int argc, char *argv[])
 		i = i+2;
 	}
 
+	printf("\nEl Sistema de Estacionamiento Moriah se encuentra abierto\n");
 	int opt = 1;
 	while (1) {
 
@@ -237,42 +229,33 @@ int main(int argc, char *argv[])
 		// SetsocketOptions. 
 		// SOL_SOCKET es para que aplique la opcion a nivel de socket
 		// SO_REUSEADDR para que la misma aplicacion pueda usar el mismo puerto varias veces
-		// opt es 1 para "prender" la opcion.
-		// No se para que es el size of int,pero en stack overflow lo ponian asi.
 		setsockopt(sockfd,SOL_SOCKET,SO_REUSEADDR,(const char *)&opt,sizeof(int));
 
-		
-
-		printf("Asignado direccion al socket ....\n"); 
+		// Estableciendo la conexion del socket
 		if (bind(sockfd,(struct sockaddr *)&info_serv, sizeof(struct sockaddr)) == -1) { 
 			perror("bind"); 
 			exit(2); 
 		} 
+
 		/* Se reciben los datos (directamente, UDP no necesita conexión) */ 
 		addr_len = sizeof(struct sockaddr); 
-		printf("Esperando datos ....\n"); 
+		printf("Esperando carros ....\n"); 
 		if ((numbytes=recvfrom(sockfd, buf, BUFFER_LEN, 0, (struct sockaddr *)&info_cl,
 			(socklen_t *)&addr_len)) == -1) { 
 			perror("recvfrom"); 
 			exit(3); 
 		} 
 
+		// Utilizamos concurrencia para atender a varios clientes a la vez
 		pid = fork();
+		// Codigo de los hijos
 		if (pid == 0) {
-
 			procesarMsg(pipeGeneral[0], pipesHEscritura[numPipe], puerto_sem_svr, buf, sockfd, info_cl);
 			free(bitacora_entrada);
 			free(bitacora_salida);
 			exit (0); 
-			/*sprintf(strPipeGeneral,"%d",pipeGeneral[0]);
-			sprintf(strPipeH,"%d",pipesHEscritura[numPipe]);
-			sprintf(strSocketfd,"%d",sockfd);
-			if (execlp("./sem_svr_h",strPipeGeneral,strPipeH,bitacora_entrada,bitacora_salida,puerto_sem_svr,buf,
-				strSocketfd,NULL)<0){
-                perror("exec: ");
-            }*/
 		}
-		else {
+		else { // Codigo del padre
 			sprintf(str,"%d",puestosOcupados);
 			write(pipeGeneral[1],str,strlen(str)+1);
 			read(pipesHLectura[numPipe],str,50);
@@ -323,10 +306,8 @@ int main(int argc, char *argv[])
 				pt = strtok(NULL,",");
 			}
 
-
-			// puestosOcupados = atoi(str);
 			numPipe = (numPipe + 1) % 3; 
-			// printf("Cantidad de puestos %s\n", str);
+			printf("PUESTOS OCUPADOS : %s\n\n", str);
 			close(sockfd);
 
 		}

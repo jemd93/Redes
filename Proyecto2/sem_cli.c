@@ -97,13 +97,13 @@ int main(int argc, char *argv[])
 		sizeof(struct sockaddr))) == -1) { 
 		perror("sendto"); 
 		exit(2); 
-	} 
-	printf("enviados %d bytes hacia %s\n",numbytes,inet_ntoa(info_serv.sin_addr)); 
+	} 	
+	printf("Se envio la siguiente informacion al estacionamiento : %s \n",mensaje); 
 
 	/* Se reciben los datos (directamente, UDP no necesita conexión) */ 
 	addr_len = sizeof(struct sockaddr); 
 	numbytes = 0;
-	printf("Esperando datos ....\n"); 
+	printf("Esperando respuesta de la puerta ....\n"); 
 	while (numbytes==0){
 		if ((numbytes=recvfrom(sockfd, buf, BUFFER_LEN, 0, (struct sockaddr *)&info_serv,
 			(socklen_t *)&addr_len)) == -1) { 
@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
 			exit(3); 
 		}
 	}
-	
+
 		 
 	printf("Mensaje: %s\n",buf);
 
