@@ -281,10 +281,12 @@ int main(int argc, char *argv[])
 	char* auxPuestos;
 	
 
+	auxPuestos = (char*)malloc(4);
 	puestos = fopen("puestos.txt","r");
 	auxPuestos = fgets(auxPuestos, 4, puestos);
 	puestosOcupados = atoi(auxPuestos);
 	fclose(puestos);
+	free(auxPuestos);
 
 	pipe(fdPipes);
 	pipeGeneral[0] = fdPipes[0];
