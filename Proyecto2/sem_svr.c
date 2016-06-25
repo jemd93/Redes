@@ -183,6 +183,13 @@ void procesarMsg(int fdGeneral, int fdHijo, char* puerto_sem_svr, char* msg, int
 			} 
 		}
 		else {
+			sprintf(strPuestos,"%d",puestosOcupados);
+			mensajeBit = (char *)malloc(strlen(strPuestos)+3);
+			strcpy(mensajeBit,strPuestos);
+			strcat(mensajeBit,",");
+			strcat(mensajeBit,"N");
+			write(fdHijo,mensajeBit,strlen(mensajeBit)+1);
+
 			printf("El estacionamiento esta lleno. No se enviara ticket \n");
 			respuesta = (char*)malloc(53);
 			strcpy(respuesta,"Disculpe, en este momento no hay puestos disponibles");
@@ -199,7 +206,7 @@ void procesarMsg(int fdGeneral, int fdHijo, char* puerto_sem_svr, char* msg, int
 			struct tm *tm = localtime(&t);
 			char s[64];
 			strftime(s,sizeof(s),"%c",tm);
-			printf("El carro de ID %s trata de salir por la puerta %d \n",id,((fdHijo-6)/2)+1);
+			printf("El carro de ID %s trata de salir por la puerta \n",id);
 			// Se escribe en la bitacora de salida
 			//fprintf(fout,"%s %s \n",id,s);
 			sprintf(strPuestos,"%d",puestosOcupados-1);
@@ -228,6 +235,13 @@ void procesarMsg(int fdGeneral, int fdHijo, char* puerto_sem_svr, char* msg, int
 			} 
 		}
 		else {
+			sprintf(strPuestos,"%d",puestosOcupados);
+			mensajeBit = (char *)malloc(strlen(strPuestos)+3);
+			strcpy(mensajeBit,strPuestos);
+			strcat(mensajeBit,",");
+			strcat(mensajeBit,"N");
+			write(fdHijo,mensajeBit,strlen(mensajeBit)+1);
+
 			printf("Error, el estacionamiento esta vacio \n");
 			respuesta = respuesta = (char*)malloc(53);
 			sprintf(respuesta,"Error, el estacionamiento esta vacio \n");
