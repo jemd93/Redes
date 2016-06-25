@@ -122,7 +122,7 @@ void procesarMsg(int fdGeneral, int fdHijo, char* puerto_sem_svr, char* msg, int
 	}
 
 	if (strcmp(accion,"e") == 0) {
-		printf("Un carro trata de entrar por la puerta %d \n",((fdHijo-6)/2)+1);
+		printf("Un carro trata de entrar por la puerta\n");
 		if (puestosOcupados < 200) {
 			struct tm *tm = localtime(&t);
 			char s[64];
@@ -316,11 +316,11 @@ int main(int argc, char *argv[])
 		addr_len = sizeof(struct sockaddr); 
 		printf("Esperando carros ....\n"); 
 		if ((numbytes=recvfrom(sockfd, buf, BUFFER_LEN, 0, (struct sockaddr *)&info_cl,
-			(socklen_t *)&addr_len)) == -1) { 
+		(socklen_t *)&addr_len)) == -1) { 
 			perror("recvfrom"); 
 			exit(3); 
-		} 
-
+		}	 	
+		
 		// Utilizamos concurrencia para atender a varios clientes a la vez
 		pid = fork();
 		// Codigo de los hijos
