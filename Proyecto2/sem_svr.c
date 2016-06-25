@@ -1,11 +1,19 @@
 /**************************************************/
 /* Servidor para la Asignacion 3.                 */
 /* Jorge Marcano : 11-10566                       */
-/* Maria Victoria Jorge :                         */
+/* Maria Victoria Jorge : 11-10495                */
 /**************************************************/
 
 #include "sem_svr.h"
 
+
+/*
+	Método que permite comprobar que se ingresaron la cantidad correcta de parámetros y que las banderas utilizadas son las predeterminadas.
+
+	Parámetros:
+		int argc: cantidad de argumentos pasados por consola.
+		char* argv[]: arreglo que contiene los argumentos pasados por consola.
+*/
 void checkArgs(int argc,char *argv[]) {
 	// Chequeo del numero de parametros
 	if (argc != 7) { 
@@ -24,6 +32,16 @@ void checkArgs(int argc,char *argv[]) {
 	}
 }
 
+/*
+	Función que calcula el monto que debe pagar un vehículo al salir del estacionamiento.
+
+	Parámetros:
+		char* fname: nombre del archivo donde se encuentra la bitácora del estacionamiento.
+		char* id: identificador único del vehículo al que se le calcula la tarifa.
+		char* tiempoAct: fecha y hora del momento en el que vehículo decide retirarse.
+	Salida:
+		Monto que deberá pagar el vehículo para salir del estacionamiento.
+*/
 int calcularMonto(char *fname,char *id,char *tiempoAct) {
 
 	FILE *arch;
@@ -87,6 +105,18 @@ int calcularMonto(char *fname,char *id,char *tiempoAct) {
 	return 1;
 }
 
+/*
+	Función que permite realizar toda la lógica del estacionamiento en el servidor y responderle al cliente.
+
+	Parámetros:
+		inf fdGeneral: file descriptor del pipe que comparten todos los procesos hijos con el padre para leer la cantidad dispobible de puestos.
+		int fdHijo: file descriptor del proceso hijo con su padre para escribir la actualización de los puestos.
+		char* puerto_sem_svr: puerto del servidor en el que está corriendo la aplicación.
+		char* msg: mensaje enviado por el cliente.
+		int sockfd: file descriptor del socket.
+		struct sockaddr_in info_cl: dirección y puerto del cliente.
+		char* fin: nombre del archivo de la bitácora de entrada.
+*/
 void procesarMsg(int fdGeneral, int fdHijo, char* puerto_sem_svr, char* msg, int sockfd, struct sockaddr_in info_cl,char* fin){
 	char lectPipe[4]; // Para leer la cantidad de puestos ocupados
 	char *pt; // Para separar el mensaje

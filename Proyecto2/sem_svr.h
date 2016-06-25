@@ -19,4 +19,5 @@
 #define BUFFER_LEN 1024 
 
 void checkArgs(int argc,char *argv[]);
+int calcularMonto(char *fname,char *id,char *tiempoAct);
 void procesarMsg(int fdGeneral, int fdHijo, char* puerto_sem_svr, char* msg, int sockfd, struct sockaddr_in info_cl,char* fin);

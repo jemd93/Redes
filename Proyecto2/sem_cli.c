@@ -4,13 +4,15 @@
 /* Maria Victoria Jorge : 11-10495                */
 /**************************************************/
 
-/* 
-	El formato del mensaje que envía el cliente es:
-	IP_cliente,puerto_servidor,operacion,id_vehiculo
-*/
-
 #include "sem_cli.h"
 
+/*
+	Método que permite comprobar que se ingresaron la cantidad correcta de parámetros y que las banderas utilizadas son las predeterminadas.
+
+	Parámetros:
+		int argc: cantidad de argumentos pasados por consola.
+		char* argv[]: arreglo que contiene los argumentos pasados por consola.
+*/
 void checkArgs(int argc,char *argv[]) {
 	// Chequeo del numero de parametros
 	if (argc != 9) { 
@@ -46,6 +48,9 @@ int main(int argc, char *argv[])
 
 	//char mensaje[44]; // (IP/HOST (24),puerto(5),op(1),id(10) )
 	char* mensaje;
+
+	int intentos = 0;
+	struct timeval tv;
 
 	// Chequeos de entrada.
 	checkArgs(argc,argv);
@@ -90,7 +95,17 @@ int main(int argc, char *argv[])
 	} 
 
 	int opt = 1;
-	setsockopt(sockfd,SOL_SOCKET,SO_REUSEADDR,(const char *)&opt,sizeof(int));
+	if (setsockopt(sockfd,SOL_SOCKET,SO_REUSEADDR,(const char *)&opt,sizeof(int)) < 0){
+		perror("setsockopt:");
+		exit(3);
+	}
+
+	tv.tv_sec = 5;
+	tv.tv_usec = 0;
+	if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0){
+		perror("setsockopt:");
+		exit(3);
+	}
 
 	/* a donde mandar */ 
 	info_serv.sin_family = AF_INET; /* usa host byte order */ 
@@ -102,23 +117,34 @@ int main(int argc, char *argv[])
 		sizeof(struct sockaddr))) == -1) { 
 		perror("sendto"); 
 		exit(2); 
-	} 	
+	}
 	printf("Se envio la siguiente informacion al estacionamiento : %s \n",mensaje); 
 
 	/* Se reciben los datos (directamente, UDP no necesita conexión) */ 
 	addr_len = sizeof(struct sockaddr); 
-	numbytes = 0;
 	printf("Esperando respuesta de la puerta ....\n"); 
-	while (numbytes==0){
+
+	while (intentos < 3){
 		if ((numbytes=recvfrom(sockfd, buf, BUFFER_LEN, 0, (struct sockaddr *)&info_serv,
 			(socklen_t *)&addr_len)) == -1) { 
-			perror("recvfrom"); 
-			exit(3); 
+			intentos++;
+			if ((numbytes=sendto(sockfd,mensaje,strlen(mensaje),0,(struct sockaddr *)&info_serv,
+				sizeof(struct sockaddr))) == -1) { 
+				perror("sendto"); 
+				exit(2); 
+			}
+			printf("Error en la comunicación con el servidor. Intentando nuevamente...\n");
+		} else {
+			break;
 		}
 	}
-
 		 
-	printf("Mensaje: %s\n",buf);
+	if (intentos == 3){
+		printf("Lo sentimos, el tiempo de respuesta se agotó.\n");
+	} else {
+		printf("Mensaje: %s\n",buf);	
+	}
+	
 
 	/* cierro sockfd */ 
 	close(sockfd); 

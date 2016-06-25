@@ -1,0 +1,63 @@
+/**************************************************/
+/* LEEME para la Asignacion 3.                    */
+/* Jorge Marcano : 11-10566                       */
+/* Maria Victoria Jorge : 11-10495                */
+/**************************************************/
+
+Esta asignación contiene los siguientes archivos:
+
+-> sem_svr.h: cabecera que contiene las declaraciones de las funciones del 
+servidor del estacionamiento.
+
+-> sem_svr.c: código fuente que contiene todas las funciones referentes al 
+servidor del estacionamiento. Las funciones presentes en este archivo son:
+    * checkArgs: permite comprobar que se ingresaron la cantidad correcta de 
+    parámetros y que las banderas utilizadas son las predeterminadas.
+    * calcularMonto: Función que calcula el monto que debe pagar un vehículo 
+    al salir del estacionamiento.
+    * procesarMsg: Función que permite realizar toda la lógica del
+    estacionamiento en el servidor y responderle al cliente.
+    * main: función principal del servidor. Aquí se utiliza el socket para 
+    leer los mensajes de los clientes y se crean procesos hijos por cada 
+    mensaje recibido.
+
+-> sem_cli.h: cabecera que contiene todas las declaraciones de las funciones 
+referentes al cliente del estacionamiento.
+
+-> sem_cli.c código fuente que contiene todas las funciones del cliente. Las 
+funciones presentes en este archivo son:
+	* checkArgs: permite comprobar que se ingresaron la cantidad correcta de 
+	parámetros y que las banderas utilizadas son las predeterminadas.
+	* main: función principal del cliente. Se construye el mensaje según la 
+	operación indicada y se envía al servidor. Luego se imprime la respuesta 
+	recibida.
+
+-> puestos.txt: contiene un número que indica la cantidad de puestos ocupados 
+del estacionamiento. Usado para permitir la recuperación de interrupciones en 
+la ejecución del servidor.
+
+La sintaxis de la invocación del servidor es la siguiente:
+	sem_svr -l <puerto_sem_svr> -i <bitácora_entrada> - o <bitácora_salida>
+
+Donde: 
+	<puerto_sem_svr>: número de puerto local en que el computador central
+	ofrecerá el servicio
+	<bitácora_entrada>: nombre y dirección relativa o absoluta de un 
+	archivo de texto que almacena las operaciones de entrada al estacionamiento
+	<bitácora_salida>: nombre y dirección relativa o absoluta de un archivo
+	de texto que almacena las operaciones de salida del estacionamiento.
+
+La sintaxis de la invocación de los clientes es la siguiente:
+	sem_cli -d <nombre_módulo_atención> -p <puerto_sem_svr> - c <op> -i
+<identificación_vehiculo>
+
+Donde:
+	<nombre_módulo_atención>: Es el nombre de dominio o la dirección IP
+	(version 4) del equipo en donde se deberá ejecutar el módulo de atención
+	centralizada.
+	<puerto_sem_svr>: Es el número de puerto remoto en que el módulo de
+	servicio atenderá la comunicación solicitada.
+	<op>: Indica si el vehículo va a entrar o salir del estacionamiento, puede 
+	tener dos valores e ó s
+	<identificación_vehículo> Es un número serial que identifica únivocamente
+	un vehículo
