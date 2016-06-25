@@ -95,10 +95,12 @@ int calcularMonto(char *fname,char *id,char *tiempoAct) {
 	}
 	else {
 		if ((totalSegs % 3600) == 0) {
-			return (totalSegs / 3600) * 80;
+			// 30 por cada hora + los 50 extras de la primera hora
+			return ((totalSegs / 3600) * 30) + 50;
 		}
 		else {
-			return ((totalSegs / 3600) * 80) + 30;
+			// 30 por cada hora + los 50 extras de la primera + 30 por la fraccion
+			return ((totalSegs / 3600) * 30) + 50 + 30;
 		}
 	}
 
