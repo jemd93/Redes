@@ -68,6 +68,11 @@ int main(int argc, char *argv[])
 		i = i+2;
 	}
 
+	if (strcmp(op,"e")!=0 && strcmp(op,"s")!=0){
+		printf("Operación inválida. Intente de nuevo con \"e\" o \"s\"\n");
+		exit(0);
+	}
+
 	mensaje = (char*)malloc(3+strlen(identificador_v));
 	strncpy(&mensaje[0],op,2);
 	strcat(mensaje,",");

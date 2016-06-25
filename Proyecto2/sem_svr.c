@@ -240,12 +240,21 @@ int main(int argc, char *argv[])
 	int numPipe = 0; // Identificador para la asignación de los pipes
 	char str[50], strPipeGeneral[4], strPipeH[4], strSocketfd[4];
 
-	int puestosOcupados = 0; // Total de puestos ocupados en el estacionamiento
+	int puestosOcupados; // Total de puestos ocupados en el estacionamiento
 	int i;
 
 	// Archivos de las bitacoras 
 	FILE *fin;
 	FILE *fout;
+
+	FILE *puestos;
+	char* auxPuestos;
+	
+
+	puestos = fopen("puestos.txt","r");
+	auxPuestos = fgets(auxPuestos, 4, puestos);
+	puestosOcupados = atoi(auxPuestos);
+	fclose(puestos);
 
 	pipe(fdPipes);
 	pipeGeneral[0] = fdPipes[0];
@@ -333,6 +342,9 @@ int main(int argc, char *argv[])
 			while (pt != NULL) {
 				if (j == 0) {
 					puestosOcupados = atoi(pt);
+					puestos = fopen("puestos.txt","w+");
+					fprintf(puestos, "%d\n",puestosOcupados );
+					fclose(puestos);
 				}
 				else if (j == 1) {
 					if (strcmp(pt,"E") == 0) {
