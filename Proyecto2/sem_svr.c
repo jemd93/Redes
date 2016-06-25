@@ -271,7 +271,7 @@ int main(int argc, char *argv[])
 	char buf[BUFFER_LEN]; // Buffer de recepción 
 	char* pt;
 
-	char puerto_sem_svr[5];
+	char puerto_sem_svr[6];
 	char* bitacora_entrada; 
 	char* bitacora_salida; 
 

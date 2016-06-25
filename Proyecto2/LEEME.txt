@@ -61,3 +61,17 @@ Donde:
 	tener dos valores e ó s
 	<identificación_vehículo> Es un número serial que identifica únivocamente
 	un vehículo
+
+Condiciones particulares :
+	Servidor :
+		- El número de puerto puede tener un máximo de 5 cifras.
+		- Las bitácoras pueden ser de cualquier longitud que el sistema operativo permita. 
+		- Preferiblemente las bitácoras deben ser archivos inexistentes, o bitácoras ya existentes,
+		  colocar como bitácora un archivo ya existente no asociado a la aplicacion causara que la aplicación
+		  coloque al final del mismo las siguientes entradas de la bitácora.
+
+	Cliente :
+		- El nombre del módulo (IP o hostname) puede tener un máximo de 20 caracteres. 
+		- El número de puerto puede tener un máximo de 5 cifras.
+		- La operación debe ser un solo caracter "e" o "s".
+		- El identificador del carro puede tener hasta un máximo de 10 cifras.
