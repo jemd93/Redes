@@ -90,6 +90,7 @@ int calcularMonto(char *fname,char *id,char *tiempoAct) {
 
 	time_t totalSegs = difftime(tSal,tEnt);
 
+	totalSegs =  7400;
 	if (totalSegs < 3600) {
 		return 30;
 	}
@@ -99,8 +100,11 @@ int calcularMonto(char *fname,char *id,char *tiempoAct) {
 			return ((totalSegs / 3600) * 30) + 50;
 		}
 		else {
+			double integ;
+			double fract;
+			fract = modf(totalSegs/3600,&integ);
 			// 30 por cada hora + los 50 extras de la primera + 30 por la fraccion
-			return ((totalSegs / 3600) * 30) + 50 + 30;
+			return (integ * 30) + 50 + 30;
 		}
 	}
 

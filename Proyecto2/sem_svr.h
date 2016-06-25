@@ -13,6 +13,7 @@
 #include <arpa/inet.h> 
 #include <sys/types.h> 
 #include <time.h>
+#include <math.h>
 #include <string.h>
 
 // #define SERVER_PORT 20495
