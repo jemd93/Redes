@@ -90,7 +90,6 @@ int calcularMonto(char *fname,char *id,char *tiempoAct) {
 
 	time_t totalSegs = difftime(tSal,tEnt);
 
-	totalSegs =  7400;
 	if (totalSegs < 3600) {
 		return 30;
 	}
